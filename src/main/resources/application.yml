@@ -9,3 +9,5 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/client-database
+  kafka:
+    bootstrap-servers: localhost:9092
