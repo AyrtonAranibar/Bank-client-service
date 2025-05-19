@@ -49,4 +49,11 @@ public class ClientController {
         return service.delete(id)
                 .then(Mono.just(ResponseEntity.noContent().<Void>build()));
     }
+
+    @GetMapping("/dni/{dni}")
+    public Mono<ResponseEntity<Client>> findByDni(@PathVariable String dni) {
+        return service.findByDni(dni)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
 }

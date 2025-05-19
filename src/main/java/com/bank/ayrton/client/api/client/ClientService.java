@@ -10,4 +10,5 @@ public interface ClientService {
     Mono<Client> save(Client client);
     Mono<Client> update(String id, Client client);
     Mono<Void> delete(String id);
+    Mono<Client> findByDni(String dni);
 }
