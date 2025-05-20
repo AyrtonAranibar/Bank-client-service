@@ -3,9 +3,12 @@ package com.bank.ayrton.client.service.client;
 import com.bank.ayrton.client.api.client.ClientRepository;
 import com.bank.ayrton.client.api.client.ClientService;
 import com.bank.ayrton.client.entity.Client;
+import com.bank.ayrton.client.entity.ClientSubtype;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -37,6 +40,28 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Mono<Client> save(Client client) {
         log.info("Guardando nuevo cliente: {}", client);
+
+        // el cliente personal no puede ser null ni vacio
+        if ("personal".equalsIgnoreCase(client.getType()) && (client.getDni() == null || client.getDni().isBlank())) {
+            String errorMessage = "El cliente personal debe tener un DNI válido";
+            log.error("Error esperado: {}", errorMessage);
+            return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage));
+        }
+
+        //validacion cuenta personal con subtipo VIP
+        if (client.getSubtype() == ClientSubtype.VIP && !"personal".equalsIgnoreCase(client.getType())) {
+            String errorMessage = "Solo los clientes personales pueden tener perfil VIP";
+            log.error("Error esperado: {}", errorMessage);
+            return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage));
+        }
+
+        //validacion cuenta empresarial con subtipo PYME
+        if (client.getSubtype() == ClientSubtype.PYME && !"empresarial".equalsIgnoreCase(client.getType())) {
+            String errorMessage = "Solo los clientes empresariales pueden tener perfil PYME";
+            log.error("Error esperado: {}", errorMessage);
+            return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage));
+        }
+
         return repository.save(client);
     }
 
