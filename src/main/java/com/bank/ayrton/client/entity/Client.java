@@ -19,4 +19,6 @@ public class Client {
 
     private String type; //empresarial o personal
     private ClientSubtype subtype = ClientSubtype.STANDARD; // STANDARD, VIP, PYME
+
+    private Boolean isClient;
 }
